@@ -7,14 +7,26 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.teamtbd.nextbusml.R;
+import com.teamtbd.nextbusml.model.Course;
+import com.teamtbd.nextbusml.model.Stop;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class StopsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private ArrayList<Stop> stops;
+    private ArrayAdapter<Stop> adapter;
+    private ListView stopsListView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -24,24 +36,6 @@ public class StopsFragment extends Fragment {
 
     public StopsFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment StopsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static StopsFragment newInstance(String param1, String param2) {
-        StopsFragment fragment = new StopsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -56,8 +50,11 @@ public class StopsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_stops, container, false);
+        View view = inflater.inflate(R.layout.fragment_stops, container, false);
+
+        stopsListView = (ListView) view.findViewById(R.id.stops_list_view);
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -65,6 +62,18 @@ public class StopsFragment extends Fragment {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        setup();
+    }
+
+    private void setup() {
+        adapter = new StopsArrayAdapter();
+        stopsListView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -97,5 +106,30 @@ public class StopsFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private class StopsArrayAdapter extends ArrayAdapter<Stop> {
+        public StopsArrayAdapter() {
+            super(getActivity(), R.layout.stops_list_item, stops);
+        }
+
+        @Override
+        public View getView(int position, View view, ViewGroup parent) {
+            if (view == null)
+                view = getLayoutInflater().inflate(R.layout.stops_list_item, parent, false);
+
+            Stop stop = stops.get(position);
+
+            TextView name = (TextView) view.findViewById(R.id.name_text_view);
+            TextView busName = (TextView) view.findViewById(R.id.bus_name_text_view);
+            TextView arrivals = (TextView) view.findViewById(R.id.arrivals_text_view);
+
+            name.setText(stop.getName());
+            busName.setText(stop.getBusName());
+            arrivals.setText(stop.getArrivals().toString());
+
+            return view;
+        }
+
     }
 }
