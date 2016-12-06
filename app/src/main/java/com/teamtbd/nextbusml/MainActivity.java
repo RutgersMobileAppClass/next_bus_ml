@@ -19,7 +19,17 @@ import com.teamtbd.nextbusml.fragment.CoursesFragment;
 import com.teamtbd.nextbusml.fragment.StopsFragment;
 import com.teamtbd.nextbusml.notification.ReminderNotification;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 public class MainActivity extends AppCompatActivity {
+
+    private final String COURSES_FILE = "COURSES_LIST.ser";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,21 +82,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void scheduleNotification(Notification notification, int delay) {
+    private void scheduleNotification(Notification notification, Date date) {
 
-        Intent notificationIntent = new Intent(this, ReminderNotification.class);
-        notificationIntent.putExtra(ReminderNotification.NOTIFICATION_ID, 1);
-        notificationIntent.putExtra(ReminderNotification.NOTIFICATION, notification);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Calendar cur_cal = new GregorianCalendar();
+        cur_cal.setTimeInMillis(System.currentTimeMillis());//set the current time and date for this calendar
 
-        long futureInMillis = SystemClock.elapsedRealtime() + delay;
-        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+        Calendar cal = new GregorianCalendar();
+        cal.add(Calendar.DAY_OF_YEAR, cur_cal.get(Calendar.DAY_OF_YEAR));
+        cal.set(Calendar.HOUR_OF_DAY, 18);
+        cal.set(Calendar.MINUTE, 32);
+        cal.set(Calendar.SECOND, cur_cal.get(Calendar.SECOND));
+        cal.set(Calendar.MILLISECOND, cur_cal.get(Calendar.MILLISECOND));
+        cal.set(Calendar.DATE, cur_cal.get(Calendar.DATE));
+        cal.set(Calendar.MONTH, cur_cal.get(Calendar.MONTH));
+        Intent intent = new Intent(this, ReminderNotification.class);
+        intent.putExtra(ReminderNotification.NOTIFICATION_ID, 1);
+        intent.putExtra(ReminderNotification.NOTIFICATION, notification);
+        PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
+        AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 30*1000, pintent);
     }
 
     private Notification createNotification(String content) {
         Notification.Builder builder = new Notification.Builder(this);
-        builder.setContentTitle("Scheduled Notification");
+        builder.setContentTitle("Your class is almost starting.");
         builder.setContentText(content);
         return builder.build();
     }
@@ -97,5 +116,6 @@ public class MainActivity extends AppCompatActivity {
         notifManager.cancelAll();
 
         // reschedule all notifications based off courses
+
     }
 }
