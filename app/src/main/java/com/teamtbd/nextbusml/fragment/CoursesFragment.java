@@ -1,74 +1,53 @@
 package com.teamtbd.nextbusml.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.renderscript.ScriptGroup;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.teamtbd.nextbusml.MainActivity;
 import com.teamtbd.nextbusml.R;
 import com.teamtbd.nextbusml.model.Course;
+import com.teamtbd.nextbusml.model.CourseTime;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link CoursesFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link CoursesFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class CoursesFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
+public class CoursesFragment extends Fragment {
     private ArrayList<Course> courses;
     private ArrayAdapter<Course> adapter;
     private ListView coursesListView;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
+    private FloatingActionButton addButton;
+    private OnCourseInteractionListener mListener;
 
     public CoursesFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CoursesFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static CoursesFragment newInstance(String param1, String param2) {
-        CoursesFragment fragment = new CoursesFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -77,26 +56,11 @@ public class CoursesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_courses, container, false);
 
         coursesListView = (ListView) view.findViewById(R.id.courses_list_view);
+        addButton = (FloatingActionButton) view.findViewById(R.id.add_button);
+
+
 
         return view;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
@@ -106,11 +70,128 @@ public class CoursesFragment extends Fragment {
     }
 
     private void setup() {
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addCourse();
+            }
+        });
+
+
+
+        try {
+            FileInputStream fileIn = new FileInputStream(MainActivity.COURSES_FILE);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            courses = (ArrayList<Course>) in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (ClassNotFoundException|IOException e){
+            e.printStackTrace();
+        }
         adapter = new CoursesArrayAdapter();
         coursesListView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
 
+
+
+
+    private void addCourse() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Add Course");
+
+        LinearLayout layout = new LinearLayout(getActivity());
+        layout.setOrientation(LinearLayout.VERTICAL);
+        float sizeInDp = getResources().getDimension(R.dimen.activity_horizontal_margin)/2;
+
+        float scale = getResources().getDisplayMetrics().density;
+        int dpAsPixels = (int) (sizeInDp*scale + 0.5f);
+
+        layout.setPadding(dpAsPixels, dpAsPixels, dpAsPixels, dpAsPixels);
+
+        final EditText title, startTime, endTime;
+
+        title = new EditText(getActivity());
+        title.setInputType(InputType.TYPE_CLASS_TEXT);
+        title.setHint(R.string.title_hint);
+
+        startTime = new EditText(getActivity());
+        startTime.setInputType(InputType.TYPE_DATETIME_VARIATION_TIME);
+        startTime.setHint(R.string.start_time_hint);
+
+
+        endTime = new EditText(getActivity());
+        endTime.setInputType(InputType.TYPE_DATETIME_VARIATION_TIME);
+        endTime.setHint(R.string.end_time_hint);
+
+        ArrayAdapter<CharSequence> campusAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.campus_array, android.R.layout.simple_spinner_item);
+        campusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        final Spinner campusSpinner = new Spinner(getActivity());
+        campusSpinner.setAdapter(campusAdapter);
+
+        ArrayAdapter<CharSequence> dayAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.day_array, android.R.layout.simple_spinner_item);
+        dayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        final Spinner daySpinner = new Spinner(getActivity());
+        daySpinner.setAdapter(dayAdapter);
+
+        layout.addView(title);
+        layout.addView(daySpinner);
+        layout.addView(startTime);
+        layout.addView(endTime);
+        layout.addView(campusSpinner);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int i) {
+                String titleText = title.getText().toString();
+                int startTimeHour = Integer.parseInt(startTime.getText().toString().split(":")[0]);
+                int startTimeMinute = Integer.parseInt(startTime.getText().toString().split(":")[1]);
+                int endTimeHour = Integer.parseInt(endTime.getText().toString().split(":")[0]);
+                int endTimeMinute = Integer.parseInt(endTime.getText().toString().split(":")[1]);
+
+                CourseTime startCourseTime = new CourseTime(startTimeHour, startTimeMinute);
+                CourseTime endCourseTime = new CourseTime(endTimeHour, endTimeMinute);
+
+                String dayText = daySpinner.getSelectedItem().toString();
+                String campusText = campusSpinner.getSelectedItem().toString();
+
+                Course c = new Course(titleText, startCourseTime, endCourseTime, campusText, dayText);
+                courses.add(c);
+                adapter.notifyDataSetChanged();
+                try{
+                    FileOutputStream fos= new FileOutputStream(MainActivity.COURSES_FILE);
+                    ObjectOutputStream oos= new ObjectOutputStream(fos);
+                    oos.writeObject(courses);
+                    oos.close();
+                    fos.close();
+                }catch(IOException ioe){
+                    ioe.printStackTrace();
+                }
+                mListener.addAlarm(c);
+
+            }
+        })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.dismiss();
+                    }
+                });
+        final AlertDialog dialog = builder.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnCourseInteractionListener) {
+            mListener = (OnCourseInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
 
     @Override
     public void onDetach() {
@@ -118,19 +199,9 @@ public class CoursesFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    public interface OnCourseInteractionListener {
+        void addAlarm(Course course);
+        void refreshAlarms();
     }
 
     private class CoursesArrayAdapter extends ArrayAdapter<Course> {
@@ -139,7 +210,7 @@ public class CoursesFragment extends Fragment {
         }
 
         @Override
-        public View getView(int position, View view, ViewGroup parent) {
+        public View getView(final int position, View view, ViewGroup parent) {
             if (view == null)
                 view = getActivity().getLayoutInflater().inflate(R.layout.stops_list_item, parent, false);
 
@@ -153,8 +224,26 @@ public class CoursesFragment extends Fragment {
             courseTime.setText(course.getCourseTime());
             campus.setText(course.getCampus().getCampusValue());
 
+            view.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    courses.remove(position);
+                    try{
+                        FileOutputStream fos= new FileOutputStream(MainActivity.COURSES_FILE);
+                        ObjectOutputStream oos= new ObjectOutputStream(fos);
+                        oos.writeObject(courses);
+                        oos.close();
+                        fos.close();
+                    }catch(IOException ioe){
+                        ioe.printStackTrace();
+                    }
+                    adapter.notifyDataSetChanged();
+                    mListener.refreshAlarms();
+                    return true;
+                }
+            });
+
             return view;
         }
-
     }
 }

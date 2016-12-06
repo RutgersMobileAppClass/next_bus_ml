@@ -12,6 +12,15 @@ public class Course implements Serializable {
     private String title;
     private CourseTime startTime, endTime;
     private Campus campus;
+    private int day;
+
+    public int getDay() {
+        return day;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
+    }
 
     public String getTitle() {
         return title;
@@ -21,12 +30,46 @@ public class Course implements Serializable {
         this.title = title;
     }
 
-    public Course(String title, CourseTime startTime, CourseTime endTime, Campus campus) {
+    public Course(String title, CourseTime startTime, CourseTime endTime, String campus, String day) {
         this.title = title;
-
         this.startTime = startTime;
         this.endTime = endTime;
-        this.campus = campus;
+
+        if (Campus.BUSCH.getCampusValue().equals(campus)) {
+            this.campus = Campus.BUSCH;
+        }
+        else if (Campus.LIVINGSTON.getCampusValue().equals(campus)) {
+            this.campus = Campus.LIVINGSTON;
+        }
+        else if (Campus.COOK.getCampusValue().equals(campus)) {
+            this.campus = Campus.COOK;
+        }
+        else if (Campus.COLLEGE_AVE.getCampusValue().equals(campus)) {
+            this.campus = Campus.COLLEGE_AVE;
+        }
+        else {
+            this.campus = Campus.BUSCH;
+        }
+
+
+        if (day.equals("Monday")) {
+            this.day = 0;
+        }
+        else if (day.equals("Tuesday")) {
+            this.day = 1;
+        }
+        else if (day.equals("Wednesday")) {
+            this.day = 2;
+        }
+        else if (day.equals("Thursday")) {
+            this.day = 3;
+        }
+        else if (day.equals("Friday")) {
+            this.day = 4;
+        }
+        else {
+            this.day = 0;
+        }
     }
 
     public CourseTime getStartTime() {
