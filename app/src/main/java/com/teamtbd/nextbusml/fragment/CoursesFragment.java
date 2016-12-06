@@ -13,10 +13,8 @@ import android.widget.TextView;
 
 import com.teamtbd.nextbusml.R;
 import com.teamtbd.nextbusml.model.Course;
-import com.teamtbd.nextbusml.model.Stop;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
