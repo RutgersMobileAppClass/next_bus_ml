@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/NextBusML.iml" filepath="$PROJECT_DIR$/NextBusML.iml" />
+      <module fileurl="file:///android/AndroidStudioProjects/next_bus_ml/app/app.iml" filepath="/android/AndroidStudioProjects/next_bus_ml/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file:///android/AndroidStudioProjects/next_bus_ml/next_bus_ml.iml" filepath="/android/AndroidStudioProjects/next_bus_ml/next_bus_ml.iml" />
     </modules>
   </component>
 </project>

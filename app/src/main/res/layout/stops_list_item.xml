@@ -17,9 +17,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:paddingTop="4dp"
+        android:textSize="18sp"
         android:textColor="@color/black_text"
-        android:paddingBottom="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:text="test2"
         android:id="@+id/bus_name_text_view"/>
 
@@ -27,6 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:textSize="18sp"
         android:textColor="@color/black_text"
         android:text="test3"
         android:id="@+id/arrivals_text_view"/>
