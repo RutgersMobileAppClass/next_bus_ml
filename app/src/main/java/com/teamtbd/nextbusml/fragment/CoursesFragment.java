@@ -141,18 +141,16 @@ public class CoursesFragment extends Fragment {
         @Override
         public View getView(int position, View view, ViewGroup parent) {
             if (view == null)
-                view = getLayoutInflater().inflate(R.layout.stops_list_item, parent, false);
+                view = getActivity().getLayoutInflater().inflate(R.layout.stops_list_item, parent, false);
 
             Course course = courses.get(position);
 
-            TextView title = (TextView) view.findViewById(R.id.title_text_view);
-            TextView startTime = (TextView) view.findViewById(R.id.start_time_text_view);
-            TextView endTime = (TextView) view.findViewById(R.id.end_time_name_text_view);
+            TextView title = (TextView) view.findViewById(R.id.course_title_text_view);
+            TextView courseTime = (TextView) view.findViewById(R.id.course_time_text_view);
             TextView campus = (TextView) view.findViewById(R.id.campus_text_view);
 
             title.setText(course.getTitle());
-            startTime.setText(course.getStartTime().getMinutes());
-            endTime.setText(course.getEndTime().getMinutes());
+            courseTime.setText(course.getCourseTime());
             campus.setText(course.getCampus().getCampusValue());
 
             return view;

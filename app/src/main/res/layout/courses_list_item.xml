@@ -33,6 +33,4 @@
         android:text="test3"
         android:id="@+id/campus_text_view"/>
 
-
-
 </LinearLayout>

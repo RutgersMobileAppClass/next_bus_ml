@@ -10,7 +10,7 @@ import java.util.Date;
 public class Course implements Serializable {
 
     private String title;
-    private Date startTime, endTime;
+    private CourseTime startTime, endTime;
     private Campus campus;
 
     public String getTitle() {
@@ -21,7 +21,7 @@ public class Course implements Serializable {
         this.title = title;
     }
 
-    public Course(String title, Date startTime, Date endTime, Campus campus) {
+    public Course(String title, CourseTime startTime, CourseTime endTime, Campus campus) {
         this.title = title;
 
         this.startTime = startTime;
@@ -29,19 +29,19 @@ public class Course implements Serializable {
         this.campus = campus;
     }
 
-    public Date getStartTime() {
+    public CourseTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
+    public void setStartTime(CourseTime startTime) {
         this.startTime = startTime;
     }
 
-    public Date getEndTime() {
+    public CourseTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
+    public void setEndTime(CourseTime endTime) {
         this.endTime = endTime;
     }
 
@@ -51,5 +51,9 @@ public class Course implements Serializable {
 
     public void setCampus(Campus campus) {
         this.campus = campus;
+    }
+
+    public String getCourseTime () {
+        return startTime.getHour() + ":" + startTime.getMinute() + " - " + endTime.getHour() + ":" + endTime.getMinute();
     }
 }
