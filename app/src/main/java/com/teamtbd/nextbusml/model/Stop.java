@@ -1,5 +1,6 @@
 package com.teamtbd.nextbusml.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -7,8 +8,17 @@ import java.util.List;
  * Created by crejaud on 12/5/16.
  */
 
-public class Stop {
+public class Stop implements Serializable {
     private List<Date> arrivals;
+
+    private String name;
+    private String busName;
+
+    public Stop(String name, String busName, List<Date> arrivals) {
+        this.name = name;
+        this.busName = busName;
+        this.arrivals = arrivals;
+    }
 
     public List<Date> getArrivals() {
         return arrivals;
@@ -32,14 +42,5 @@ public class Stop {
 
     public void setBusName(String busName) {
         this.busName = busName;
-    }
-
-    private String name;
-    private String busName;
-
-    public Stop(String name, String busName, List<Date> arrivals) {
-        this.name = name;
-        this.busName = busName;
-        this.arrivals = arrivals;
     }
 }
