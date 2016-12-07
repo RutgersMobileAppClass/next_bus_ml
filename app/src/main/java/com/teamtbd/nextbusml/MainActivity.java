@@ -71,6 +71,10 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(this, new String[] {
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION },
+                    1);
         }
         Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if(location != null && location.getTime() > Calendar.getInstance().getTimeInMillis() - 2 * 60 * 1000) {
@@ -226,18 +230,19 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
                 && BUSCH_MIN_LAT <= latitude && latitude <= BUSCH_MAX_LAT) {
             return Campus.BUSCH;
         }
-        else if (LIVVY_MIN_LONG <= longitude && longitude <= LIVVY_MAX_LONG
-                && LIVVY_MIN_LAT <= latitude && latitude <= LIVVY_MAX_LAT) {
-            return Campus.LIVINGSTON;
-        }
-        else if (COOK_MIN_LONG <= longitude && longitude <= COOK_MAX_LONG
-                && COOK_MIN_LAT <= latitude && latitude <= COOK_MAX_LAT) {
-            return Campus.COOK;
-        }
-        else if (CAC_MIN_LONG <= longitude && longitude <= CAC_MAX_LONG
-                && CAC_MIN_LAT <= latitude && latitude <= CAC_MAX_LAT) {
-            return Campus.COLLEGE_AVE;
-        } else {
+//        else if (LIVVY_MIN_LONG <= longitude && longitude <= LIVVY_MAX_LONG
+//                && LIVVY_MIN_LAT <= latitude && latitude <= LIVVY_MAX_LAT) {
+//            return Campus.LIVINGSTON;
+//        }
+//        else if (COOK_MIN_LONG <= longitude && longitude <= COOK_MAX_LONG
+//                && COOK_MIN_LAT <= latitude && latitude <= COOK_MAX_LAT) {
+//            return Campus.COOK;
+//        }
+//        else if (CAC_MIN_LONG <= longitude && longitude <= CAC_MAX_LONG
+//                && CAC_MIN_LAT <= latitude && latitude <= CAC_MAX_LAT) {
+//            return Campus.COLLEGE_AVE;
+//        }
+        else {
             // no campus
             return null;
         }
