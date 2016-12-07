@@ -24,6 +24,7 @@ import android.view.MenuItem;
 
 import com.teamtbd.nextbusml.fragment.CoursesFragment;
 import com.teamtbd.nextbusml.fragment.StopsFragment;
+import com.teamtbd.nextbusml.model.Campus;
 import com.teamtbd.nextbusml.model.Course;
 import com.teamtbd.nextbusml.notification.ReminderNotification;
 
@@ -33,13 +34,25 @@ import java.io.ObjectInputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements CoursesFragment.OnCourseInteractionListener, LocationListener {
 
     public static final String COURSES_FILE = "COURSES_LIST.ser";
     public static final String BASE_URL = "http://runextbus.herokuapp.com/route/";
+
+    public static final double BUSCH_MAX_LONG = -74.478908;
+    public static final double BUSCH_MIN_LONG = -74.450765;
+    public static final double BUSCH_MAX_LAT = 40.511323;
+    public static final double BUSCH_MIN_LAT = 40.526724;
+
+    // fill rest for 3 other campuses... please
+
+
     LocationManager mLocationManager;
 
 
@@ -58,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return;
         }
         Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if(location != null && location.getTime() > Calendar.getInstance().getTimeInMillis() - 2 * 60 * 1000) {
@@ -72,6 +84,15 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
         double current_longitude = location.getLongitude();
 
         Log.d("MAINACTIVITY", current_latitude+":"+current_longitude);
+
+        Campus currentCampus = findCampus(location);
+        if (currentCampus == null) {
+            // not on a campus...
+            return;
+        }
+
+        // get next course
+        Campus nextCampus = findNextCampus(getCoursesFromFile());
 
         showStops();
     }
@@ -195,6 +216,47 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
         return courses;
     }
 
+    private Campus findCampus(Location location) {
+        double longitude, latitude;
+        longitude = location.getLongitude();
+        latitude = location.getLatitude();
+
+        // check if in busch
+        if (BUSCH_MIN_LONG <= longitude && longitude <= BUSCH_MAX_LONG
+                && BUSCH_MIN_LAT <= latitude && latitude <= BUSCH_MAX_LAT) {
+            return Campus.BUSCH;
+        }
+        else if (LIVVY_MIN_LONG <= longitude && longitude <= LIVVY_MAX_LONG
+                && LIVVY_MIN_LAT <= latitude && latitude <= LIVVY_MAX_LAT) {
+            return Campus.LIVINGSTON;
+        }
+        else if (COOK_MIN_LONG <= longitude && longitude <= COOK_MAX_LONG
+                && COOK_MIN_LAT <= latitude && latitude <= COOK_MAX_LAT) {
+            return Campus.COOK;
+        }
+        else if (CAC_MIN_LONG <= longitude && longitude <= CAC_MAX_LONG
+                && CAC_MIN_LAT <= latitude && latitude <= CAC_MAX_LAT) {
+            return Campus.COLLEGE_AVE;
+        } else {
+            // no campus
+            return null;
+        }
+    }
+
+    private Campus findNextCampus(ArrayList<Course> courses) {
+        // get next class;
+
+        //TODO
+        // get current hour, minutes, and days
+        Calendar cal = new GregorianCalendar();
+        return null;
+    }
+
+    private Course getNearestCourse(ArrayList<Course> courses) {
+        //TODO
+        return null;
+    }
+
     @Override
     public void onLocationChanged(Location location) {
         if (location != null) {
@@ -207,7 +269,6 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
                 //                                          int[] grantResults)
                 // to handle the case where the user grants the permission. See the documentation
                 // for ActivityCompat#requestPermissions for more details.
-                return;
             }
             mLocationManager.removeUpdates(this);
         }
