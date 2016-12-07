@@ -39,6 +39,7 @@ import java.util.GregorianCalendar;
 public class MainActivity extends AppCompatActivity implements CoursesFragment.OnCourseInteractionListener, LocationListener {
 
     public static final String COURSES_FILE = "COURSES_LIST.ser";
+    public static final String BASE_URL = "http://runextbus.herokuapp.com/route/";
     LocationManager mLocationManager;
 
 
