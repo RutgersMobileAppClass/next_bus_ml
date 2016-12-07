@@ -45,10 +45,25 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
     public static final String COURSES_FILE = "COURSES_LIST.ser";
     public static final String BASE_URL = "http://runextbus.herokuapp.com/route/";
 
-    public static final double BUSCH_MAX_LONG = -74.478908;
-    public static final double BUSCH_MIN_LONG = -74.450765;
-    public static final double BUSCH_MAX_LAT = 40.511323;
-    public static final double BUSCH_MIN_LAT = 40.526724;
+    public static final double BUSCH_MAX_LONG = -74.450765;
+    public static final double BUSCH_MIN_LONG = -74.478908;
+    public static final double BUSCH_MAX_LAT = 40.526724;
+    public static final double BUSCH_MIN_LAT = 40.511323;
+
+    public static final double LIVVY_MAX_LONG = -74.430871;
+    public static final double LIVVY_MIN_LONG = -74.44651;
+    public static final double LIVVY_MAX_LAT = 40.527227;
+    public static final double LIVVY_MIN_LAT = 40.518376;
+
+    public static final double COOK_MAX_LONG = -74.427082;
+    public static final double COOK_MIN_LONG = -74.448313;
+    public static final double COOK_MAX_LAT = 40.476597;
+    public static final double COOK_MIN_LAT = 40.475409;
+
+    public static final double CAC_MAX_LONG = -74.441745;
+    public static final double CAC_MIN_LONG = -74.460306;
+    public static final double CAC_MAX_LAT = 40.505617;
+    public static final double CAC_MIN_LAT = 40.492795;
 
     // fill rest for 3 other campuses... please
 
@@ -90,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
         Log.d("MAINACTIVITY", current_latitude+":"+current_longitude);
 
         Campus currentCampus = findCampus(location);
+        Log.d("MAINACTIVITY", currentCampus.getCampusValue());
         if (currentCampus == null) {
             // not on a campus...
             return;
@@ -230,18 +246,18 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
                 && BUSCH_MIN_LAT <= latitude && latitude <= BUSCH_MAX_LAT) {
             return Campus.BUSCH;
         }
-//        else if (LIVVY_MIN_LONG <= longitude && longitude <= LIVVY_MAX_LONG
-//                && LIVVY_MIN_LAT <= latitude && latitude <= LIVVY_MAX_LAT) {
-//            return Campus.LIVINGSTON;
-//        }
-//        else if (COOK_MIN_LONG <= longitude && longitude <= COOK_MAX_LONG
-//                && COOK_MIN_LAT <= latitude && latitude <= COOK_MAX_LAT) {
-//            return Campus.COOK;
-//        }
-//        else if (CAC_MIN_LONG <= longitude && longitude <= CAC_MAX_LONG
-//                && CAC_MIN_LAT <= latitude && latitude <= CAC_MAX_LAT) {
-//            return Campus.COLLEGE_AVE;
-//        }
+        else if (LIVVY_MIN_LONG <= longitude && longitude <= LIVVY_MAX_LONG
+                && LIVVY_MIN_LAT <= latitude && latitude <= LIVVY_MAX_LAT) {
+            return Campus.LIVINGSTON;
+        }
+        else if (COOK_MIN_LONG <= longitude && longitude <= COOK_MAX_LONG
+                && COOK_MIN_LAT <= latitude && latitude <= COOK_MAX_LAT) {
+            return Campus.COOK;
+        }
+        else if (CAC_MIN_LONG <= longitude && longitude <= CAC_MAX_LONG
+                && CAC_MIN_LAT <= latitude && latitude <= CAC_MAX_LAT) {
+            return Campus.COLLEGE_AVE;
+        }
         else {
             // no campus
             return null;
