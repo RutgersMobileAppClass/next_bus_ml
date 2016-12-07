@@ -172,20 +172,7 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
         Calendar cur_cal = new GregorianCalendar();
         cur_cal.setTimeInMillis(System.currentTimeMillis());//set the current time and date for this calendar
 
-        int day;
-        if (course.getDay() == 0) {
-            day = Calendar.MONDAY;
-        } else if (course.getDay() == 1) {
-            day = Calendar.TUESDAY;
-        } else if (course.getDay() == 2) {
-            day = Calendar.WEDNESDAY;
-        } else if (course.getDay() == 3) {
-            day = Calendar.THURSDAY;
-        } else if (course.getDay() == 4) {
-            day = Calendar.FRIDAY;
-        } else {
-            day = Calendar.MONDAY;
-        }
+        int day = course.getDay();
 
         // for the next 12 weeks~
         for (int i = 0; i < 12; i++) {

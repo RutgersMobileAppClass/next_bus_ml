@@ -1,7 +1,5 @@
 package com.teamtbd.nextbusml.fragment;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -14,11 +12,7 @@ import android.widget.TextView;
 
 import com.teamtbd.nextbusml.MainActivity;
 import com.teamtbd.nextbusml.R;
-import com.teamtbd.nextbusml.model.Campus;
-import com.teamtbd.nextbusml.model.Course;
-import com.teamtbd.nextbusml.model.Stop;
 import com.teamtbd.nextbusml.model.retrofit.ApiEndpoints;
-import com.teamtbd.nextbusml.model.retrofit.RetrofitPrediction;
 import com.teamtbd.nextbusml.model.retrofit.RetrofitStop;
 
 import java.util.ArrayList;

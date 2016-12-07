@@ -1,6 +1,7 @@
 package com.teamtbd.nextbusml.model;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -53,22 +54,22 @@ public class Course implements Serializable {
 
 
         if (day.equals("Monday")) {
-            this.day = 0;
+            this.day = Calendar.MONDAY;
         }
         else if (day.equals("Tuesday")) {
-            this.day = 1;
+            this.day = Calendar.TUESDAY;
         }
         else if (day.equals("Wednesday")) {
-            this.day = 2;
+            this.day = Calendar.WEDNESDAY;
         }
         else if (day.equals("Thursday")) {
-            this.day = 3;
+            this.day = Calendar.THURSDAY;
         }
         else if (day.equals("Friday")) {
-            this.day = 4;
+            this.day = Calendar.FRIDAY;
         }
         else {
-            this.day = 0;
+            this.day = Calendar.MONDAY;
         }
     }
 
