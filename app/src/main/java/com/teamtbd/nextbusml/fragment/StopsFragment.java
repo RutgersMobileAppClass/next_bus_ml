@@ -14,9 +14,11 @@ import android.widget.TextView;
 
 import com.teamtbd.nextbusml.MainActivity;
 import com.teamtbd.nextbusml.R;
+import com.teamtbd.nextbusml.model.Campus;
 import com.teamtbd.nextbusml.model.Course;
 import com.teamtbd.nextbusml.model.Stop;
 import com.teamtbd.nextbusml.model.retrofit.ApiEndpoints;
+import com.teamtbd.nextbusml.model.retrofit.RetrofitPrediction;
 import com.teamtbd.nextbusml.model.retrofit.RetrofitStop;
 
 import java.util.ArrayList;
@@ -29,9 +31,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class StopsFragment extends Fragment {
-    private ArrayList<Stop> stops;
-    private ArrayAdapter<Stop> adapter;
+    private List<RetrofitStop> stops = new ArrayList<>();
+    private ArrayAdapter<RetrofitStop> adapter;
     private ListView stopsListView;
+    private String bus = "a";
 
     public StopsFragment() {
         // Required empty public constructor
@@ -59,6 +62,9 @@ public class StopsFragment extends Fragment {
     }
 
     private void setup() {
+        adapter = new StopsArrayAdapter();
+        stopsListView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         // get stops by calling apis
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(MainActivity.BASE_URL)
@@ -68,13 +74,17 @@ public class StopsFragment extends Fragment {
         ApiEndpoints apiService =
                 retrofit.create(ApiEndpoints.class);
 
-        Call<List<RetrofitStop>> call = apiService.getStops("a");
+        Call<List<RetrofitStop>> call = apiService.getStops(bus);
 
         call.enqueue(new Callback<List<RetrofitStop>>() {
             @Override
             public void onResponse(Call<List<RetrofitStop>> call, Response<List<RetrofitStop>> response) {
                 // we have the stops
-                Log.d("RESPONSE", response.body().toString());
+                stops.clear();
+                stops.addAll(response.body());
+                for (RetrofitStop rs: stops)
+                    Log.d("RETROFIT", rs.getTitle() + ", " + rs.getPredictions().toString());
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -82,13 +92,10 @@ public class StopsFragment extends Fragment {
                 // Log error here since request failed
             }
         });
-        adapter = new StopsArrayAdapter();
-        stopsListView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
     }
 
 
-    private class StopsArrayAdapter extends ArrayAdapter<Stop> {
+    private class StopsArrayAdapter extends ArrayAdapter<RetrofitStop> {
         public StopsArrayAdapter() {
             super(getActivity(), R.layout.stops_list_item, stops);
         }
@@ -98,15 +105,16 @@ public class StopsFragment extends Fragment {
             if (view == null)
                 view = getActivity().getLayoutInflater().inflate(R.layout.stops_list_item, parent, false);
 
-            Stop stop = stops.get(position);
+            Log.d("Adapter", "inside getview");
+            RetrofitStop stop = stops.get(position);
 
             TextView name = (TextView) view.findViewById(R.id.name_text_view);
             TextView busName = (TextView) view.findViewById(R.id.bus_name_text_view);
             TextView arrivals = (TextView) view.findViewById(R.id.arrivals_text_view);
 
-            name.setText(stop.getName());
-            busName.setText(stop.getBusName());
-            arrivals.setText(stop.getArrivals().toString());
+            name.setText(stop.getTitle());
+            busName.setText(bus);
+            arrivals.setText(stop.getPredictions().toString());
 
             return view;
         }

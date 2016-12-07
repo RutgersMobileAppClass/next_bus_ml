@@ -88,6 +88,10 @@ public class CoursesFragment extends Fragment {
         } catch (ClassNotFoundException|IOException e){
             e.printStackTrace();
         }
+
+        if (courses == null) {
+            courses = new ArrayList<>();
+        }
         adapter = new CoursesArrayAdapter();
         coursesListView.setAdapter(adapter);
         adapter.notifyDataSetChanged();

@@ -48,4 +48,8 @@ public class RetrofitPrediction {
         this.seconds = seconds;
     }
 
+    public String toString() {
+        return getMinutes();
+    }
+
 }
