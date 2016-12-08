@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.teamtbd.nextbusml.MainActivity;
 import com.teamtbd.nextbusml.R;
+import com.teamtbd.nextbusml.constant.BusStops;
 import com.teamtbd.nextbusml.model.Campus;
 import com.teamtbd.nextbusml.model.retrofit.ApiEndpoints;
 import com.teamtbd.nextbusml.model.retrofit.Stop;
@@ -33,6 +34,8 @@ public class StopsFragment extends Fragment {
     private ListView stopsListView;
     private String bus = "a";
     private Campus campus = Campus.BUSCH;
+
+    private final String INVALID_CAMPUS = "INVALID";
 
     public StopsFragment() {
         // Required empty public constructor
@@ -60,8 +63,6 @@ public class StopsFragment extends Fragment {
             campus = Campus.BUSCH;
         }
         bus = getArguments().getString(MainActivity.BUS_KEY);
-
-        Log.d(TAG, "bus: " + bus + ", campus: " + campus.getCampusValue());
     }
 
     @Override
@@ -81,7 +82,6 @@ public class StopsFragment extends Fragment {
     }
 
     private void setup() {
-        Log.d(TAG, "2bus: " + bus + ", campus: " + campus.getCampusValue());
         adapter = new StopsArrayAdapter();
         stopsListView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -101,10 +101,31 @@ public class StopsFragment extends Fragment {
             public void onResponse(Call<List<Stop>> call, Response<List<Stop>> response) {
                 // we have the stops
                 stops.clear();
-                stops.addAll(response.body());
+                List<Stop> tempStops = response.body();
                 Log.d(TAG, "response");
-                for (Stop rs: stops)
+                for (Stop rs: tempStops) {
                     Log.d("RETROFIT", rs.getTitle() + ", " + rs.getPredictions().toString());
+                    if (campus == Campus.BUSCH) {
+                        if (BusStops.BUSCH_STOPS.contains(rs.getTitle())) {
+                            stops.add(rs);
+                        }
+                    }
+                    if (campus == Campus.LIVINGSTON) {
+                        if (BusStops.LIVVY_STOPS.contains(rs.getTitle())) {
+                            stops.add(rs);
+                        }
+                    }
+                    if (campus == Campus.COOK) {
+                        if (BusStops.COOK_STOPS.contains(rs.getTitle())) {
+                            stops.add(rs);
+                        }
+                    }
+                    if (campus == Campus.COLLEGE_AVE) {
+                        if (BusStops.CAC_STOPS.contains(rs.getTitle())) {
+                            stops.add(rs);
+                        }
+                    }
+                }
                 adapter.notifyDataSetChanged();
             }
 
