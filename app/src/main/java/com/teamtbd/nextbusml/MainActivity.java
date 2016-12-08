@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -106,7 +108,6 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
         if(location != null && location.getTime() > Calendar.getInstance().getTimeInMillis() - 2 * 60 * 1000) {
             // Do something with the recent location fix
             //  otherwise wait for the update below
-            return;
         }
         else {
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
@@ -285,7 +286,6 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
     }
 
     private Course getNearestCourse(ArrayList<Course> courses) {
-        //TODO
         return null;
     }
 
