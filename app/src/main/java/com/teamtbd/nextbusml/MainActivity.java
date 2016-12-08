@@ -39,6 +39,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity implements CoursesFragment.OnCourseInteractionListener, LocationListener {
 
@@ -202,6 +203,7 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
         for (int i = 0; i < 12; i++) {
             Calendar cal = new GregorianCalendar();
             cal.add(Calendar.DAY_OF_YEAR, cur_cal.get(Calendar.DAY_OF_YEAR));
+            cal.setTimeZone(TimeZone.getTimeZone("est"));
             cal.set(Calendar.HOUR_OF_DAY, course.getStartTime().getHour());
             cal.set(Calendar.MINUTE, course.getStartTime().getMinute());
             cal.set(Calendar.SECOND, 0);
@@ -211,6 +213,8 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
             cal.set(Calendar.WEEK_OF_MONTH, cur_cal.get(Calendar.WEEK_OF_MONTH));
             cal.add(Calendar.DAY_OF_MONTH, i*7);
             cal.add(Calendar.MINUTE, -40);
+            Log.d("ALARM", cal.getTime().toString());
+            Log.d("ALARM", cal.getTimeInMillis() + "");
             Intent intent = new Intent(this, ReminderNotification.class);
             intent.putExtra(ReminderNotification.NOTIFICATION_ID, 1);
             intent.putExtra(ReminderNotification.NOTIFICATION, createNotification(course.getTitle() + " is starting soon!"));
@@ -236,11 +240,11 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
     private ArrayList<Course> getCoursesFromFile() {
         ArrayList<Course> courses = new ArrayList<>();
         try {
-            FileInputStream fileIn = new FileInputStream(MainActivity.COURSES_FILE);
-            ObjectInputStream in = new ObjectInputStream(fileIn);
+            FileInputStream fis = openFileInput(MainActivity.COURSES_FILE);
+            ObjectInputStream in = new ObjectInputStream(fis);
             courses = (ArrayList<Course>) in.readObject();
             in.close();
-            fileIn.close();
+            fis.close();
         } catch (ClassNotFoundException|IOException e){
             e.printStackTrace();
         }

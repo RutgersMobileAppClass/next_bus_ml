@@ -1,9 +1,11 @@
 package com.teamtbd.nextbusml.model;
 
+import java.io.Serializable;
+
 /**
  * Created by pjb165 on 12/6/16.
  */
-public class CourseTime {
+public class CourseTime implements Serializable {
     private int hour;
     private int minute;
 

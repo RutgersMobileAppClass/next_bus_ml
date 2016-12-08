@@ -82,11 +82,11 @@ public class CoursesFragment extends Fragment {
 
 
         try {
-            FileInputStream fileIn = new FileInputStream(MainActivity.COURSES_FILE);
-            ObjectInputStream in = new ObjectInputStream(fileIn);
+            FileInputStream fis = getActivity().openFileInput(MainActivity.COURSES_FILE);
+            ObjectInputStream in = new ObjectInputStream(fis);
             courses = (ArrayList<Course>) in.readObject();
             in.close();
-            fileIn.close();
+            fis.close();
         } catch (ClassNotFoundException|IOException e){
             e.printStackTrace();
         }
@@ -166,7 +166,7 @@ public class CoursesFragment extends Fragment {
                 courses.add(c);
                 adapter.notifyDataSetChanged();
                 try{
-                    FileOutputStream fos= new FileOutputStream(MainActivity.COURSES_FILE);
+                    FileOutputStream fos= getActivity().openFileOutput(MainActivity.COURSES_FILE, Context.MODE_PRIVATE);
                     ObjectOutputStream oos= new ObjectOutputStream(fos);
                     oos.writeObject(courses);
                     oos.close();
@@ -184,7 +184,7 @@ public class CoursesFragment extends Fragment {
                     }
                 });
         final AlertDialog dialog = builder.show();
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
 
         title.addTextChangedListener(new TextWatcher() {
             @Override
@@ -274,7 +274,7 @@ public class CoursesFragment extends Fragment {
         @Override
         public View getView(final int position, View view, ViewGroup parent) {
             if (view == null)
-                view = getActivity().getLayoutInflater().inflate(R.layout.stops_list_item, parent, false);
+                view = getActivity().getLayoutInflater().inflate(R.layout.courses_list_item, parent, false);
 
             Course course = courses.get(position);
 
@@ -291,7 +291,7 @@ public class CoursesFragment extends Fragment {
                 public boolean onLongClick(View view) {
                     courses.remove(position);
                     try{
-                        FileOutputStream fos= new FileOutputStream(MainActivity.COURSES_FILE);
+                        FileOutputStream fos= getActivity().openFileOutput(MainActivity.COURSES_FILE, Context.MODE_PRIVATE);
                         ObjectOutputStream oos= new ObjectOutputStream(fos);
                         oos.writeObject(courses);
                         oos.close();
