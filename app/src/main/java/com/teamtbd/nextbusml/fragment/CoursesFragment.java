@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class CoursesFragment extends Fragment {
@@ -194,10 +196,10 @@ public class CoursesFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (title.getText().toString().isEmpty()) {
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                } else {
+                if (textWatch(title.getText().toString(), startTime.getText().toString(), endTime.getText().toString())) {
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                } else {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                 }
             }
 
@@ -216,7 +218,11 @@ public class CoursesFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // TODO
+                if (textWatch(title.getText().toString(), startTime.getText().toString(), endTime.getText().toString())) {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                } else {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                }
             }
 
             @Override
@@ -233,7 +239,11 @@ public class CoursesFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // TODO
+                if (textWatch(title.getText().toString(), startTime.getText().toString(), endTime.getText().toString())) {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                } else {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                }
             }
 
             @Override
@@ -241,6 +251,13 @@ public class CoursesFragment extends Fragment {
 
             }
         });
+    }
+
+    private boolean textWatch(String title, String start, String end) {
+        Pattern p = Pattern.compile("(0?[0-9]|1[0-9]|2[01234]):(0?[0-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|5[0-9])");
+        Matcher matcherStart = p.matcher(start);
+        Matcher matcherEnd = p.matcher(end);
+        return !title.isEmpty() && matcherStart.matches() && matcherEnd.matches();
     }
 
 
