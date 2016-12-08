@@ -96,6 +96,38 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
 
         startService(new Intent(MainActivity.this, NotificationService.class));
 
+        requestLocation();
+
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            ActivityCompat.requestPermissions(this, new String[] {
+//                            Manifest.permission.ACCESS_FINE_LOCATION,
+//                            Manifest.permission.ACCESS_COARSE_LOCATION },
+//                    1);
+//        }
+//        location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//        if(location != null && location.getTime() > Calendar.getInstance().getTimeInMillis() - 2 * 60 * 1000) {
+//            // Do something with the recent location fix
+//            //  otherwise wait for the update below
+//        }
+//        else {
+//            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+//        }
+//        double current_latitude = location.getLatitude();
+//        double current_longitude = location.getLongitude();
+//
+//        Log.d("MAINACTIVITY", current_latitude+":"+current_longitude);
+
+        //showStops();
+    }
+
+    private void requestLocation() {
         final LocationListener locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location l) {
@@ -151,34 +183,18 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
             return;
         }
         locationManager.requestSingleUpdate(criteria, locationListener, looper);
+    }
 
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            ActivityCompat.requestPermissions(this, new String[] {
-//                            Manifest.permission.ACCESS_FINE_LOCATION,
-//                            Manifest.permission.ACCESS_COARSE_LOCATION },
-//                    1);
-//        }
-//        location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//        if(location != null && location.getTime() > Calendar.getInstance().getTimeInMillis() - 2 * 60 * 1000) {
-//            // Do something with the recent location fix
-//            //  otherwise wait for the update below
-//        }
-//        else {
-//            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-//        }
-//        double current_latitude = location.getLatitude();
-//        double current_longitude = location.getLongitude();
-//
-//        Log.d("MAINACTIVITY", current_latitude+":"+current_longitude);
-
-        //showStops();
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // permission was granted
+                requestLocation();
+            } else {
+                // permission denied
+            }
+        }
     }
 
     private void showStops() {
