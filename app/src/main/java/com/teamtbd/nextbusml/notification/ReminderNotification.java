@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 /**
  * Created by crejaud on 12/6/16.
@@ -16,6 +17,8 @@ public class ReminderNotification extends BroadcastReceiver {
     public static String NOTIFICATION = "notification";
 
     public void onReceive(Context context, Intent intent) {
+
+        Log.d("ALARM", "ALARM SHOULD GO OFF");
 
         NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 

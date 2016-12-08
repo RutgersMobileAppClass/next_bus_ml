@@ -197,14 +197,17 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
         Calendar cur_cal = new GregorianCalendar();
         cur_cal.setTimeInMillis(System.currentTimeMillis());//set the current time and date for this calendar
 
+        Log.d("MAIN", cur_cal.getTime().toString() + " pls");
+
         int day = course.getDay();
 
         // for the next 12 weeks~
         for (int i = 0; i < 12; i++) {
             Calendar cal = new GregorianCalendar();
-            cal.add(Calendar.DAY_OF_YEAR, cur_cal.get(Calendar.DAY_OF_YEAR));
             cal.setTimeZone(TimeZone.getTimeZone("est"));
-            cal.set(Calendar.HOUR_OF_DAY, course.getStartTime().getHour());
+            cal.set(Calendar.YEAR, 2016);
+            Log.d("MAIN", course.getStartTime().getHour() + " pls");
+            cal.set(Calendar.HOUR, course.getStartTime().getHour());
             cal.set(Calendar.MINUTE, course.getStartTime().getMinute());
             cal.set(Calendar.SECOND, 0);
             cal.set(Calendar.MILLISECOND, 0);
@@ -212,6 +215,7 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
             cal.set(Calendar.MONTH, cur_cal.get(Calendar.MONTH));
             cal.set(Calendar.WEEK_OF_MONTH, cur_cal.get(Calendar.WEEK_OF_MONTH));
             cal.add(Calendar.DAY_OF_MONTH, i*7);
+            cal.add(Calendar.HOUR, -7);
             cal.add(Calendar.MINUTE, -40);
             Log.d("ALARM", cal.getTime().toString());
             Log.d("ALARM", cal.getTimeInMillis() + "");
@@ -220,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
             intent.putExtra(ReminderNotification.NOTIFICATION, createNotification(course.getTitle() + " is starting soon!"));
             PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
             AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 30 * 1000, pintent);
+            alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pintent);
         }
     }
 
