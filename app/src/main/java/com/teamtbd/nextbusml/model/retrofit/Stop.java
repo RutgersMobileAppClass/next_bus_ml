@@ -4,14 +4,14 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class RetrofitStop {
+public class Stop {
 
     @SerializedName("title")
     @Expose
     private String title;
     @SerializedName("predictions")
     @Expose
-    private List<RetrofitPrediction> predictions = null;
+    private List<Prediction> predictions = null;
 
     /**
      *
@@ -36,7 +36,7 @@ public class RetrofitStop {
      * @return
      * The predictions
      */
-    public List<RetrofitPrediction> getPredictions() {
+    public List<Prediction> getPredictions() {
         return predictions;
     }
 
@@ -45,7 +45,7 @@ public class RetrofitStop {
      * @param predictions
      * The predictions
      */
-    public void setPredictions(List<RetrofitPrediction> predictions) {
+    public void setPredictions(List<Prediction> predictions) {
         this.predictions = predictions;
     }
 

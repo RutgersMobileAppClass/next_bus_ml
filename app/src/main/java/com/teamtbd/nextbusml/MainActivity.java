@@ -65,10 +65,21 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
     public static final double CAC_MAX_LAT = 40.505617;
     public static final double CAC_MIN_LAT = 40.492795;
 
-    // fill rest for 3 other campuses... please
+    public static final String A_BUS = "a";
+    public static final String B_BUS = "b";
+    public static final String EE_BUS = "ee";
+    public static final String F_BUS = "f";
+    public static final String H_BUS = "h";
+    public static final String LX_BUS = "lx";
+    public static final String REXB_BUS = "rexb";
+    public static final String REXL_BUS = "rexl";
 
+    public static final String BUS_KEY = "bus";
+    public static final String CAMPUS_KEY = "campus";
 
     LocationManager mLocationManager;
+
+    private Location location;
 
 
     @Override
@@ -91,10 +102,11 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
                             Manifest.permission.ACCESS_COARSE_LOCATION },
                     1);
         }
-        Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if(location != null && location.getTime() > Calendar.getInstance().getTimeInMillis() - 2 * 60 * 1000) {
             // Do something with the recent location fix
             //  otherwise wait for the update below
+            return;
         }
         else {
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
@@ -104,23 +116,34 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
 
         Log.d("MAINACTIVITY", current_latitude+":"+current_longitude);
 
-        Campus currentCampus = findCampus(location);
-        Log.d("MAINACTIVITY", currentCampus.getCampusValue());
-        if (currentCampus == null) {
-            // not on a campus...
-            return;
-        }
-
-        // get next course
-        Campus nextCampus = findNextCampus(getCoursesFromFile());
-
         showStops();
     }
 
     private void showStops() {
+        Campus currentCampus = findCampus(location);
+        if (currentCampus == null) {
+            // not on a campus...
+            Log.d("MAINACTIVITY", "Current campus is null");
+            return;
+        }
+        Log.d("MAINACTIVITY", currentCampus.getCampusValue());
+
+
+        // get next course
+        Campus nextCampus = findNextCampus();
+
+        String bus = findBusFromCampuses(currentCampus, nextCampus);
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         StopsFragment newFragment = new StopsFragment();
+
+        Bundle bundle = new Bundle();
+        // bundle.putString(BUS_KEY, bus);
+        bundle.putString(BUS_KEY, B_BUS);
+        bundle.putSerializable(CAMPUS_KEY, currentCampus);
+
+        newFragment.setArguments(bundle);
 
         transaction.replace(R.id.main_fragment_container, newFragment);
 
@@ -251,8 +274,9 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
         }
     }
 
-    private Campus findNextCampus(ArrayList<Course> courses) {
+    private Campus findNextCampus() {
         // get next class;
+        Course nearestCourse = getNearestCourse(getCoursesFromFile());
 
         //TODO
         // get current hour, minutes, and days
@@ -263,6 +287,36 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
     private Course getNearestCourse(ArrayList<Course> courses) {
         //TODO
         return null;
+    }
+
+    private String findBusFromCampuses(Campus currentCampus, Campus nextCampus) {
+        if ((currentCampus == Campus.BUSCH && nextCampus == Campus.LIVINGSTON)
+                || (currentCampus == Campus.LIVINGSTON && nextCampus == Campus.BUSCH)) {
+            return B_BUS;
+        }
+        else if ((currentCampus == Campus.BUSCH && nextCampus == Campus.COLLEGE_AVE)
+                || (currentCampus == Campus.COLLEGE_AVE && nextCampus == Campus.BUSCH)) {
+            return A_BUS;
+        }
+        else if ((currentCampus == Campus.BUSCH && nextCampus == Campus.COOK)
+                || (currentCampus == Campus.COOK && nextCampus == Campus.BUSCH)) {
+            return REXB_BUS;
+        }
+        else if ((currentCampus == Campus.LIVINGSTON && nextCampus == Campus.COLLEGE_AVE)
+                || (currentCampus == Campus.COLLEGE_AVE && nextCampus == Campus.LIVINGSTON)) {
+            return LX_BUS;
+        }
+        else if ((currentCampus == Campus.LIVINGSTON && nextCampus == Campus.COOK)
+                || (currentCampus == Campus.COOK && nextCampus == Campus.LIVINGSTON)) {
+            return REXL_BUS;
+        }
+        else if ((currentCampus == Campus.COLLEGE_AVE && nextCampus == Campus.COOK)
+                || (currentCampus == Campus.COOK && nextCampus == Campus.COLLEGE_AVE)) {
+            return F_BUS;
+        }
+        else {
+            return F_BUS;
+        }
     }
 
     @Override
@@ -277,6 +331,7 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
                 //                                          int[] grantResults)
                 // to handle the case where the user grants the permission. See the documentation
                 // for ActivityCompat#requestPermissions for more details.
+                return;
             }
             mLocationManager.removeUpdates(this);
         }

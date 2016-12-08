@@ -3,7 +3,7 @@ package com.teamtbd.nextbusml.model.retrofit;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class RetrofitPrediction {
+public class Prediction {
 
     @SerializedName("minutes")
     @Expose
