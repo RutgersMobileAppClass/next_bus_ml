@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Location;
@@ -26,6 +27,7 @@ import com.teamtbd.nextbusml.fragment.CoursesFragment;
 import com.teamtbd.nextbusml.fragment.StopsFragment;
 import com.teamtbd.nextbusml.model.Campus;
 import com.teamtbd.nextbusml.model.Course;
+import com.teamtbd.nextbusml.notification.NotificationService;
 import com.teamtbd.nextbusml.notification.ReminderNotification;
 
 import java.io.FileInputStream;
@@ -78,10 +80,9 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
     public static final String BUS_KEY = "bus";
     public static final String CAMPUS_KEY = "campus";
 
-    LocationManager mLocationManager;
-
+    private LocationManager mLocationManager;
+    private int notif_id = 1;
     private Location location;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +92,8 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
 
 
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        startService(new Intent(MainActivity.this, NotificationService.class));
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -120,6 +123,9 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
 
         showStops();
     }
+
+
+
 
     private void showStops() {
         Campus currentCampus = findCampus(location);
@@ -185,12 +191,7 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
         }
     }
 
-    private Notification createNotification(String content) {
-        Notification.Builder builder = new Notification.Builder(this);
-        builder.setContentTitle("Your class is almost starting.");
-        builder.setContentText(content);
-        return builder.build();
-    }
+
 
     @Override
     public void addAlarm(Course course) {
@@ -201,31 +202,45 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
 
         int day = course.getDay();
 
-        // for the next 12 weeks~
-        for (int i = 0; i < 12; i++) {
-            Calendar cal = new GregorianCalendar();
-            cal.setTimeZone(TimeZone.getTimeZone("est"));
-            cal.set(Calendar.YEAR, 2016);
-            Log.d("MAIN", course.getStartTime().getHour() + " pls");
-            cal.set(Calendar.HOUR, course.getStartTime().getHour());
-            cal.set(Calendar.MINUTE, course.getStartTime().getMinute());
-            cal.set(Calendar.SECOND, 0);
-            cal.set(Calendar.MILLISECOND, 0);
-            cal.set(Calendar.DAY_OF_WEEK, day);
-            cal.set(Calendar.MONTH, cur_cal.get(Calendar.MONTH));
-            cal.set(Calendar.WEEK_OF_MONTH, cur_cal.get(Calendar.WEEK_OF_MONTH));
-            cal.add(Calendar.DAY_OF_MONTH, i*7);
-            cal.add(Calendar.HOUR, -7);
-            cal.add(Calendar.MINUTE, -40);
-            Log.d("ALARM", cal.getTime().toString());
-            Log.d("ALARM", cal.getTimeInMillis() + "");
-            Intent intent = new Intent(this, ReminderNotification.class);
-            intent.putExtra(ReminderNotification.NOTIFICATION_ID, 1);
-            intent.putExtra(ReminderNotification.NOTIFICATION, createNotification(course.getTitle() + " is starting soon!"));
-            PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
-            AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pintent);
+        Calendar cal = new GregorianCalendar();
+        cal.setTimeZone(TimeZone.getTimeZone("est"));
+        cal.set(Calendar.YEAR, 2016);
+        Log.d("MAIN", course.getStartTime().getHour() + " pls");
+        cal.set(Calendar.HOUR, course.getStartTime().getHour());
+        cal.set(Calendar.MINUTE, course.getStartTime().getMinute());
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Log.d("MAIN", day + "");
+        Log.d("MAIN", cur_cal.get(Calendar.DAY_OF_WEEK) + "");
+        cal.set(Calendar.DAY_OF_WEEK, day);
+        cal.set(Calendar.MONTH, cur_cal.get(Calendar.MONTH));
+        cal.set(Calendar.WEEK_OF_MONTH, cur_cal.get(Calendar.WEEK_OF_MONTH));
+        cal.add(Calendar.HOUR, -7);
+        cal.add(Calendar.MINUTE, -40);
+        if (day < cur_cal.get(Calendar.DAY_OF_WEEK)) {
+            cal.add(Calendar.HOUR, 24*7);
         }
+        Log.d("ALARM", cal.getTime().toString());
+        Log.d("ALARM", cal.getTimeInMillis() + "");
+        Intent intent = new Intent("alarmy");//new Intent(MainActivity.this, ReminderNotification.class);
+        Log.d("ALARM","Creating notification with ID = " + notif_id);
+        intent.putExtra(ReminderNotification.NOTIFICATION_ID, notif_id);
+        Log.d("ALARM","notificiation id is now = " + notif_id);
+        intent.putExtra(ReminderNotification.NOTIFICATION, course.getTitle() + " is starting soon!");
+        PendingIntent pintent = PendingIntent.getBroadcast(getApplicationContext(), notif_id, intent, 0);
+        notif_id++;
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarm.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pintent);
+        Log.d("ALARM","done");
+
+        /*
+         <receiver android:process=":remote" android:name=".notification.ReminderNotification">
+            <intent-filter>
+                <action android:name="alarmy"/>
+            </intent-filter>
+        </receiver>
+         */
+
     }
 
     @Override

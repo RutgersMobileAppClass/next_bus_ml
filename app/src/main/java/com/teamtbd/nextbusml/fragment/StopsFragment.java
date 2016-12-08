@@ -35,8 +35,6 @@ public class StopsFragment extends Fragment {
     private String bus = "a";
     private Campus campus = Campus.BUSCH;
 
-    private final String INVALID_CAMPUS = "INVALID";
-
     public StopsFragment() {
         // Required empty public constructor
     }
@@ -46,22 +44,7 @@ public class StopsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         // get bundle data
-        String campusValue = getArguments().getString(MainActivity.CAMPUS_KEY);
-        if (Campus.BUSCH.getCampusValue().equals(campusValue)) {
-            campus = Campus.BUSCH;
-        }
-        else if (Campus.LIVINGSTON.getCampusValue().equals(campusValue)) {
-            campus = Campus.LIVINGSTON;
-        }
-        else if (Campus.COOK.getCampusValue().equals(campusValue)) {
-            campus = Campus.COOK;
-        }
-        else if (Campus.COLLEGE_AVE.getCampusValue().equals(campusValue)) {
-            campus = Campus.COLLEGE_AVE;
-        }
-        else {
-            campus = Campus.BUSCH;
-        }
+        campus = (Campus) getArguments().getSerializable(MainActivity.CAMPUS_KEY);
         bus = getArguments().getString(MainActivity.BUS_KEY);
     }
 
