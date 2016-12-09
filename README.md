@@ -2,7 +2,9 @@
 
 # Members
 Corentin (Corey) Rejaud
+
 Patrick Bargoud
+
 Kevin Horlavadi
 
 # Description
