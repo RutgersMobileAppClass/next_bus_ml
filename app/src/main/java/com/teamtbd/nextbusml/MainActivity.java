@@ -289,7 +289,18 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
         cal.set(Calendar.WEEK_OF_MONTH, cur_cal.get(Calendar.WEEK_OF_MONTH));
         cal.add(Calendar.HOUR, -7);
         cal.add(Calendar.MINUTE, -40);
-        if (day < cur_cal.get(Calendar.DAY_OF_WEEK)) {
+        Log.d("MAIN", course.getStartTime().getHour() + ":" + course.getStartTime().getMinute());
+        Log.d("MAIN", cur_cal.get(Calendar.DAY_OF_WEEK) + "");
+        Log.d("MAIN", cur_cal.get(Calendar.HOUR) + "");
+        Log.d("MAIN", cur_cal.get(Calendar.MINUTE) + "");
+        boolean earlierDay = day < cur_cal.get(Calendar.DAY_OF_WEEK);
+        boolean sameDay = day <= cur_cal.get(Calendar.DAY_OF_WEEK) && day >= cur_cal.get(Calendar.DAY_OF_WEEK);
+        boolean earlierHour = course.getStartTime().getHour() < cur_cal.get(Calendar.HOUR);
+        boolean sameHour = course.getStartTime().getHour() <= cur_cal.get(Calendar.HOUR) && course.getStartTime().getHour() >= cur_cal.get(Calendar.HOUR);
+        boolean earlierMinute = course.getStartTime().getMinute() <= cur_cal.get(Calendar.MINUTE);
+        boolean shouldAddAWeek = earlierDay || (sameDay && earlierHour) || (sameDay && sameHour && earlierMinute);
+        Log.d("MAIN", shouldAddAWeek + "");
+        if (shouldAddAWeek) {
             cal.add(Calendar.HOUR, 24*7);
         }
         Log.d("ALARM", cal.getTime().toString());

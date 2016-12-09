@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -299,8 +300,18 @@ public class CoursesFragment extends Fragment {
             TextView courseTime = (TextView) view.findViewById(R.id.course_time_text_view);
             TextView campus = (TextView) view.findViewById(R.id.campus_text_view);
 
+            String day;
+            switch(course.getDay()) {
+                case Calendar.MONDAY: day = "Monday"; break;
+                case Calendar.TUESDAY: day = "Tuesday"; break;
+                case Calendar.WEDNESDAY: day = "Wednesday"; break;
+                case Calendar.THURSDAY: day = "Thursday"; break;
+                case Calendar.FRIDAY: day = "Friday"; break;
+                default: day = "Monday"; break;
+            }
+
             title.setText(course.getTitle());
-            courseTime.setText(course.getCourseTime());
+            courseTime.setText(day + ": " + course.getCourseTime());
             campus.setText(course.getCampus().getCampusValue());
 
             view.setOnLongClickListener(new View.OnLongClickListener() {
