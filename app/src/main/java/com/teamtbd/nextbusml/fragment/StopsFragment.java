@@ -65,6 +65,10 @@ public class StopsFragment extends Fragment {
     }
 
     private void setup() {
+        Log.d(TAG, bus + "");
+        if (bus == null) {
+            return;
+        }
         adapter = new StopsArrayAdapter();
         stopsListView.setAdapter(adapter);
         adapter.notifyDataSetChanged();

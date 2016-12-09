@@ -208,19 +208,23 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
         }
         Log.d("MAINACTIVITY", currentCampus.getCampusValue());
 
-
         // get next course
         Campus nextCampus = findNextCampus();
+        Log.d("MAINACTIVITY", "Next campus: " + nextCampus + "");
+        if (nextCampus != null) {
+            Log.d("MAINACTIVITY", nextCampus.getCampusValue());
+        }
 
         String bus = findBusFromCampuses(currentCampus, nextCampus);
+
+        Log.d("MAINACTIVITY", "Bus: " + bus +"");
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         StopsFragment newFragment = new StopsFragment();
 
         Bundle bundle = new Bundle();
-        // bundle.putString(BUS_KEY, bus);
-        bundle.putString(BUS_KEY, B_BUS);
+        bundle.putString(BUS_KEY, bus);
         bundle.putSerializable(CAMPUS_KEY, currentCampus);
 
         newFragment.setArguments(bundle);
@@ -384,14 +388,13 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
     private Campus findNextCampus() {
         // get next class;
         Course nearestCourse = getNearestCourse(getCoursesFromFile());
-        Log.d("NEARESTCOURSE", nearestCourse.getTitle());
 
-        Campus nextCampus = nearestCourse.getCampus();
 
-        //TODO
-        // get current hour, minutes, and days
-        Calendar cal = new GregorianCalendar();
-        return null;
+        if (nearestCourse == null) {
+            return null;
+        } else {
+            return nearestCourse.getCampus();
+        }
     }
 
     private Course getNearestCourse(ArrayList<Course> courses) {
@@ -410,12 +413,14 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
             int min = nextCourse.getStartTime().getMinute();
             int courseTime = hour*60 + min;
            if  (nextCourse.getDay() == day){
-               if (courseTime > currentTime && courseTime < closestTime){
+               Log.d("NEXT_CAMPUS", "Same day " + nextCourse.getTitle());
+               if (courseTime > currentTime && (courseTime < closestTime || closestTime == 0)){
                        closestTime = courseTime;
                        newCourse = nextCourse;
                }
            }
         }
+
 
 
        // Course nextCourse = courses.get(0);
@@ -448,7 +453,7 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
             return F_BUS;
         }
         else {
-            return F_BUS;
+            return null;
         }
     }
 
