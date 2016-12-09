@@ -291,12 +291,12 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
         cal.add(Calendar.MINUTE, -40);
         Log.d("MAIN", course.getStartTime().getHour() + ":" + course.getStartTime().getMinute());
         Log.d("MAIN", cur_cal.get(Calendar.DAY_OF_WEEK) + "");
-        Log.d("MAIN", cur_cal.get(Calendar.HOUR) + "");
+        Log.d("MAIN", cur_cal.get(Calendar.HOUR_OF_DAY) + "");
         Log.d("MAIN", cur_cal.get(Calendar.MINUTE) + "");
         boolean earlierDay = day < cur_cal.get(Calendar.DAY_OF_WEEK);
         boolean sameDay = day <= cur_cal.get(Calendar.DAY_OF_WEEK) && day >= cur_cal.get(Calendar.DAY_OF_WEEK);
-        boolean earlierHour = course.getStartTime().getHour() < cur_cal.get(Calendar.HOUR);
-        boolean sameHour = course.getStartTime().getHour() <= cur_cal.get(Calendar.HOUR) && course.getStartTime().getHour() >= cur_cal.get(Calendar.HOUR);
+        boolean earlierHour = course.getStartTime().getHour() < cur_cal.get(Calendar.HOUR_OF_DAY);
+        boolean sameHour = course.getStartTime().getHour() <= cur_cal.get(Calendar.HOUR_OF_DAY) && course.getStartTime().getHour() >= cur_cal.get(Calendar.HOUR_OF_DAY);
         boolean earlierMinute = course.getStartTime().getMinute() <= cur_cal.get(Calendar.MINUTE);
         boolean shouldAddAWeek = earlierDay || (sameDay && earlierHour) || (sameDay && sameHour && earlierMinute);
         Log.d("MAIN", shouldAddAWeek + "");
@@ -384,6 +384,7 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
     private Campus findNextCampus() {
         // get next class;
         Course nearestCourse = getNearestCourse(getCoursesFromFile());
+        Log.d("NEARESTCOURSE", nearestCourse.getTitle());
 
         Campus nextCampus = nearestCourse.getCampus();
 
