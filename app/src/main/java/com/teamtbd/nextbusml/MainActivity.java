@@ -389,7 +389,6 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
         // get next class;
         Course nearestCourse = getNearestCourse(getCoursesFromFile());
 
-
         if (nearestCourse == null) {
             return null;
         } else {
@@ -398,7 +397,7 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
     }
 
     private Course getNearestCourse(ArrayList<Course> courses) {
-
+        //Find next upcoming course
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_WEEK);
         int curHour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -420,9 +419,6 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
                }
            }
         }
-
-
-
        // Course nextCourse = courses.get(0);
         return newCourse;
     }
