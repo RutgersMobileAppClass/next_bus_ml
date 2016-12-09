@@ -36,6 +36,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -43,6 +44,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity implements CoursesFragment.OnCourseInteractionListener, LocationListener {
@@ -379,7 +381,32 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
     }
 
     private Course getNearestCourse(ArrayList<Course> courses) {
-        return null;
+
+        Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+        int curHour = calendar.get(Calendar.HOUR_OF_DAY);
+        int curMin = calendar.get(Calendar.MINUTE);
+        int currentTime = curHour*60 + curMin;
+        int closestTime = 0;
+        Course newCourse = null;
+
+        for(int i = 0; i < courses.size(); i++){
+            Course nextCourse = courses.get(i);
+
+           if  (nextCourse.getDay() == day){
+               int hour = nextCourse.getStartTime().getHour();
+               int min = nextCourse.getStartTime().getMinute();
+               int courseTime = hour*60 + min;
+               if (courseTime < currentTime && courseTime > closestTime){
+                       closestTime = courseTime;
+                       newCourse = nextCourse;
+               }
+           }
+        }
+
+
+       // Course nextCourse = courses.get(0);
+        return newCourse;
     }
 
     private String findBusFromCampuses(Campus currentCampus, Campus nextCampus) {
