@@ -374,6 +374,8 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
         // get next class;
         Course nearestCourse = getNearestCourse(getCoursesFromFile());
 
+        Campus nextCampus = nearestCourse.getCampus();
+
         //TODO
         // get current hour, minutes, and days
         Calendar cal = new GregorianCalendar();
@@ -392,12 +394,11 @@ public class MainActivity extends AppCompatActivity implements CoursesFragment.O
 
         for(int i = 0; i < courses.size(); i++){
             Course nextCourse = courses.get(i);
-
+            int hour = nextCourse.getStartTime().getHour();
+            int min = nextCourse.getStartTime().getMinute();
+            int courseTime = hour*60 + min;
            if  (nextCourse.getDay() == day){
-               int hour = nextCourse.getStartTime().getHour();
-               int min = nextCourse.getStartTime().getMinute();
-               int courseTime = hour*60 + min;
-               if (courseTime < currentTime && courseTime > closestTime){
+               if (courseTime > currentTime && courseTime < closestTime){
                        closestTime = courseTime;
                        newCourse = nextCourse;
                }
